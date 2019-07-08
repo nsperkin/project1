@@ -9,9 +9,9 @@
 	<div class="container">
 		<h1>Sign up!</h1>
 
-		{% if nomatch %}
+		{% if message %}
 		<div class="alert alert-danger" role="alert">
-			Passwords do not match!
+			{{ message }}
 		</div>
 		{% endif %}
 

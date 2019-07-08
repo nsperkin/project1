@@ -52,5 +52,11 @@ def user():
 	username = request.form.get("username")
 
 	if(password != confirm):
-		return render_template("register.html", nomatch=True)
-	# if db.execute("SELECT * FROM users WHERE username = :username", {"username": username}).rowcount == 0:
+		return render_template("register.html", message="Passwords do not match.")
+	if db.execute("SELECT * FROM users WHERE username = :username", {"username": username}).rowcount == 0:
+		db.execute("INSERT INTO users (username, password) VALUES (:username, :password)",
+              {"username": username, "password": password})
+		db.commit()
+		return render_template("login.html")
+	else:
+		return render_template("register.html", message="Username is already taken")
