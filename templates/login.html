@@ -2,7 +2,18 @@
 
 {% block body %}
 	<div class="container">
-		<form action="#" method="post">
+		<br>
+		{% if message %}
+			<div class="alert alert-danger" role="alert">
+				{{ message }}
+			</div>
+		{%  endif %}
+		{% if success %}
+			<div class="alert alert-success" role="alert">
+				{{ success }}
+			</div>
+		{%  endif %}
+		<form action="{{ url_for('home') }}" method="post">
 			<br>Username:<br>
 			<input type="text" name="username"><br>
 			Password:<br>

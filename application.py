@@ -35,7 +35,6 @@ class book:
 		self.rating = rating
 		self.num_ratings = num_ratings
 
-
 # Try 
 @app.route("/login")
 def login():
@@ -57,6 +56,25 @@ def user():
 		db.execute("INSERT INTO users (username, password) VALUES (:username, :password)",
               {"username": username, "password": password})
 		db.commit()
-		return render_template("login.html")
+		return render_template("login.html", success="Successfully Registered!")
 	else:
 		return render_template("register.html", message="Username is already taken")
+
+@app.route("/home", methods=["POST", "GET"])
+def home():
+	if request.method == "GET":
+		if 'authenticated' in session:
+			return render_template("home.html")
+		else:
+			return render_template("home.html", message="Error: User not authenticated")
+
+	username = request.form.get("username")
+	password = request.form.get("password")
+
+	if(db.execute("SELECT * FROM users WHERE username = :username and password = :password", 
+			{"username": username, "password": password}).rowcount==1):
+		session['authenticated']=True
+		return render_template("home.html")
+	else:
+		return render_template("login.html", message="Invalid Login Credentials")
+
