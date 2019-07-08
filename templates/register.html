@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block style %}
+		.marg-top {margin-top=5px !important;}
+{% endblock %}
+
+
+{% block body %}
+	<div class="container">
+		<h1>Sign up!</h1>
+
+		{% if nomatch %}
+		<div class="alert alert-danger" role="alert">
+			Passwords do not match!
+		</div>
+		{% endif %}
+
+		<form action="{{ url_for('user') }}" method="post">
+			<br>Username:<br>
+			<input type="text" name="username" required="required"><br>
+			Password:<br>
+			<input type="Password" name="password" required="required"><br>
+			Confirm Password:<br>
+			<input type="Password" name="confirm" required="required"><br><br>
+			<button class="btn, btn-primary">Register</button>
+		</form>
+		<a href="{{ url_for('login') }}">
+			<button class="btn, btn-secondary">Cancel</button>
+		</a>
+	</div>
+{% endblock %}

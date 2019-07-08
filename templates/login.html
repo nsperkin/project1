@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block body %}
+	<div class="container">
+		<form action="#" method="post">
+			<br>Username:<br>
+			<input type="text" name="username"><br>
+			Password:<br>
+			<input type="Password" name="password"><br><br>
+			<button class="btn, btn-primary">Login</button>
+		</form>
+
+		Don't have an account? <a href="{{ url_for('register') }}">Sign up!</a>
+	</div>
+{% endblock %}
