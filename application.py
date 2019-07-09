@@ -24,21 +24,13 @@ db = scoped_session(sessionmaker(bind=engine))
 
 res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "7BlWqLEVO1nBlVDLGsl4Aw", "isbns": "9781632168146"})
 
-# class for book objects
-class book:
-	def __init__(self, title, author, pub_year, isbn, reviews, rating, num_ratings):
-		self.title = title
-		self.author = author
-		self.pub_year = pub_year
-		self.isbn = isbn
-		self.reviews = reviews
-		self.rating = rating
-		self.num_ratings = num_ratings
-
 # Try 
-@app.route("/login")
+@app.route("/")
 def login():
-    return render_template("login.html")
+	if 'username' in session:
+		return render_template("home.html")
+	else:
+		return render_template("login.html")
 
 @app.route("/register")
 def register():
@@ -63,7 +55,7 @@ def user():
 @app.route("/home", methods=["POST", "GET"])
 def home():
 	if request.method == "GET":
-		if 'authenticated' in session:
+		if 'username' in session:
 			return render_template("home.html")
 		else:
 			return render_template("home.html", message="Error: User not authenticated")
@@ -73,8 +65,31 @@ def home():
 
 	if(db.execute("SELECT * FROM users WHERE username = :username and password = :password", 
 			{"username": username, "password": password}).rowcount==1):
-		session['authenticated']=True
+		session['username']=username
 		return render_template("home.html")
 	else:
 		return render_template("login.html", message="Invalid Login Credentials")
 
+@app.route("/logout")
+def logout():
+	session.pop('username', None)
+	return render_template("login.html")
+
+@app.route("/search", methods=["POST", "GET"])
+def search():
+	if 'username' in session:
+		srch = request.form.get("srch")
+		srch = "%" + srch + "%"
+		result = db.execute("SELECT * FROM books WHERE isbn LIKE :srch OR title LIKE :srch OR author LIKE :srch", 
+			{"srch": srch}).fetchall()
+
+		print(result)
+		for i in result:
+			print(i)
+
+		if not result:
+			return render_template("search.html", message="No results found!")
+		else:
+			return render_template("search.html", result=result)
+	else:
+		return render_template("home.html", message="Error: User not authenticated")

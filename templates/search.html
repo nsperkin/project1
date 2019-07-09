@@ -1,7 +1,5 @@
 {% extends "layout.html" %}
 
-{% block style %}{% endblock %}
-
 {% block nav %}
 	<ul class="navbar-nav">
         <li class="nav-item">
@@ -11,15 +9,7 @@
 {% endblock %}
 
 {% block body %}
-{% if message %}
-	<h2> {{ message }} </h2> <br>
-	<a href="{{ url_for('login') }}">Return to Login</a>
-
-{% else %}
-	<div class="container">
-		<br>
-		<h1>Welcome!</h1>
-		<p>Here at book-e, you can search for books, leave reviews, and stay up to date on many of your favorite titles. Try searching for an ISBN, author, or title below!</p>
+	{% if message %}
 		<form action="{{ url_for('search') }}" method="post">
 			<div class="input-group md-form form-sm form-2 pl-0">
   				<input type="text" name="srch" placeholder="Search..." class="form-control my-0 py-1">
@@ -27,5 +17,13 @@
 			</div>
 		</form>
 	</div>
-{% endif %}
+
+	<h4> {{ message }}</h4>
+	{% else %}
+		<ul>
+		{% for result in results %}
+			<li> result </li>
+		{% endfor %}
+		</ul>
+	{% endif %}
 {% endblock %}

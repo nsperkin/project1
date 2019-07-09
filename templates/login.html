@@ -2,13 +2,14 @@
 
 {% block body %}
 	<div class="container">
-		<br>
 		{% if message %}
+			<br>
 			<div class="alert alert-danger" role="alert">
 				{{ message }}
 			</div>
 		{%  endif %}
 		{% if success %}
+			<br>
 			<div class="alert alert-success" role="alert">
 				{{ success }}
 			</div>
