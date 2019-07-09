@@ -22,8 +22,6 @@ Session(app)
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
-res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "7BlWqLEVO1nBlVDLGsl4Aw", "isbns": "9781632168146"})
-
 # Try 
 @app.route("/")
 def login():
@@ -83,13 +81,20 @@ def search():
 		result = db.execute("SELECT * FROM books WHERE isbn LIKE :srch OR title LIKE :srch OR author LIKE :srch", 
 			{"srch": srch}).fetchall()
 
-		print(result)
-		for i in result:
-			print(i)
-
 		if not result:
 			return render_template("search.html", message="No results found!")
 		else:
-			return render_template("search.html", result=result)
+			return render_template("search.html", results=result)
+	else:
+		return render_template("home.html", message="Error: User not authenticated")
+
+@app.route("/book/<string:isbn>")
+def book(isbn):
+	if 'username' in session:
+		result = db.execute("SELECT * FROM books WHERE isbn=:isbn", {"isbn":isbn}).fetchone()
+		res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "7BlWqLEVO1nBlVDLGsl4Aw", "isbns": isbn})
+		rating = res.json()['books'][0]['average_rating']
+		number = res.json()['books'][0]['ratings_count']
+		return render_template("book.html", result=result, rating=rating, number=number)
 	else:
 		return render_template("home.html", message="Error: User not authenticated")

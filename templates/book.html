@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block nav %}
+	<ul class="navbar-nav">
+        <li class="nav-item">
+    		<a class="link nav-link" href="{{ url_for('logout') }}">Logout</a>
+    	</li>
+    </ul>
+
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<br>
+		<h1>Book Details</h1>
+		<ul>
+			<li> <strong>Title:</strong> {{ result.title }}</li>
+			<li> <strong>Author:</strong> {{ result.author }}</li>
+			<li> <strong>ISBN:</strong> {{ result.isbn }}</li>
+			<li> <strong>Publication Year:</strong> {{ result.year }}</li>
+		</ul>
+		<br>
+		<h2>Goodreads Statistics:</h2>
+		<ul>
+			<li><strong>Average rating:</strong> {{ rating }}</li>
+			<li><strong>Number of Ratings:</strong> {{ number }}</li>
+		</ul>
+	</div>
+{% endblock %}
+

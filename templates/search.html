@@ -9,21 +9,26 @@
 {% endblock %}
 
 {% block body %}
-	{% if message %}
+	<div class="container">
+	<br>
 		<form action="{{ url_for('search') }}" method="post">
 			<div class="input-group md-form form-sm form-2 pl-0">
   				<input type="text" name="srch" placeholder="Search..." class="form-control my-0 py-1">
   				<button class="btn btn-primary">Enter</button>
 			</div>
-		</form>
-	</div>
+		</form> <br>
 
-	<h4> {{ message }}</h4>
-	{% else %}
-		<ul>
-		{% for result in results %}
-			<li> result </li>
-		{% endfor %}
-		</ul>
+		{% if message %}	
+		<h4> {{ message }}</h4>
+
+		{% else %}
+			<ul>
+			{% for result in results %}
+				<a href="{{ url_for('book', isbn=result.isbn, result=result) }}"> 
+					<li> {{ result }} </li>
+				</a>
+			{% endfor %}
+			</ul>
+		</div>
 	{% endif %}
 {% endblock %}
