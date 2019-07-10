@@ -1,7 +1,7 @@
 import os
 import requests
 
-from flask import Flask, session, render_template, request
+from flask import Flask, session, render_template, request, redirect, url_for
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -95,6 +95,28 @@ def book(isbn):
 		res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "7BlWqLEVO1nBlVDLGsl4Aw", "isbns": isbn})
 		rating = res.json()['books'][0]['average_rating']
 		number = res.json()['books'][0]['ratings_count']
-		return render_template("book.html", result=result, rating=rating, number=number)
+		rev = db.execute("SELECT * FROM reviews WHERE isbn=:isbn", {"isbn":isbn}).fetchall()
+		return render_template("book.html", result=result, rating=rating, number=number, rev=rev)
 	else:
 		return render_template("home.html", message="Error: User not authenticated")
+
+@app.route("/review/<string:isbn>", methods=["POST"])
+def review(isbn):
+	if 'username' in session:
+		username = session['username']
+		rating = int(request.form.get("rating"))
+		review = request.form.get("review")
+		if(db.execute("SELECT * FROM reviews WHERE username = :username and isbn = :isbn",
+			{"username": username, "isbn": isbn}).rowcount>0):
+			return redirect(url_for('error', isbn=isbn, message="User has already submitted a review!"))
+		else:
+			db.execute("INSERT INTO reviews (isbn, username, rating, review) VALUES (:isbn, :username, :rating, :review)",
+				{"isbn":isbn, "username":username, "rating":rating, "review":review})
+			db.commit()
+			return redirect(url_for('book', isbn=isbn))
+	else:
+		return render_template("home.html", message="Error: User not authenticated")
+
+@app.route("/error/<string:isbn>/<string:message>")
+def error(isbn, message):
+	return render_template("error.html", isbn=isbn, message=message)

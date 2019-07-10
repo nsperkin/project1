@@ -25,6 +25,28 @@
 			<li><strong>Average rating:</strong> {{ rating }}</li>
 			<li><strong>Number of Ratings:</strong> {{ number }}</li>
 		</ul>
+
+		<h2>Reviews!</h2>
+		<p>Leave your review below:</p>
+		<form id="revform" action="{{ url_for('review', isbn=result.isbn)}}" method="post">
+			Rating: <select name="rating">
+				<option value=1>1</option>
+				<option value=2>2</option>
+				<option value=3>3</option>
+				<option value=4>4</option>
+				<option value=5>5</option>
+			</select>
+			<br>Review:<br>
+			<input type="text" name="review">
+			<button class="btn btn-primary">Submit</button>
+		</form>
+
+		<h2>Ratings:</h2>
+		<ul>
+		{% for r in rev %}
+			<li>User <strong>{{r.username}}</strong> left a <strong>{{r.rating}}</strong> review saying "{{r.review}}"</li>
+		{% endfor %}
+		</ul>
 	</div>
 {% endblock %}
 

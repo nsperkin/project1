@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block nav %}
+	<ul class="navbar-nav">
+        <li class="nav-item">
+    		<a class="link nav-link" href="{{ url_for('logout') }}">Logout</a>
+    	</li>
+    </ul>
+
+{% endblock %}
+
+{% block body %}
+		{% if message %}
+		<div class="container"><br>
+			<div class="alert alert-danger" role="alert">
+				{{ message }}
+			</div>
+			<a href="{{ url_for('book', isbn=isbn) }}">Go back</a>
+		</div>
+		{% endif %}
+{% endblock %}
