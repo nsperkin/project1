@@ -1,7 +1,7 @@
 import os
 import requests
 
-from flask import Flask, session, render_template, request, redirect, url_for
+from flask import Flask, session, render_template, request, redirect, url_for, jsonify
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -120,3 +120,21 @@ def review(isbn):
 @app.route("/error/<string:isbn>/<string:message>")
 def error(isbn, message):
 	return render_template("error.html", isbn=isbn, message=message)
+
+@app.route("/api/<string:isbn>")
+def book_api(isbn):
+	result = db.execute("SELECT * FROM books WHERE isbn=:isbn", {"isbn":isbn}).fetchone()
+	if result is None:
+		return jsonify({"error": "Invalid isbn"}), 404
+	res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "7BlWqLEVO1nBlVDLGsl4Aw", "isbns": isbn})
+	rating = res.json()['books'][0]['average_rating']
+	number = res.json()['books'][0]['ratings_count']
+	return jsonify({
+		"title": result.title,
+		"author": result.author,
+		"year": result.year,
+		"isbn": result.isbn,
+		"review_count": number,
+		"average_score": rating
+		})
+
